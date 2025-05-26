@@ -63,4 +63,13 @@ class CarDataController {
         return response()->json(['success' => true]);
     }
 
+    public function getCustomer() {
+        $customers = Customer::all();
+
+        if (!$customers) {
+            return response()->json(['error' => 'Customer not found!'], 403);
+        }
+
+        return response()->json($customers);
+    }
 }

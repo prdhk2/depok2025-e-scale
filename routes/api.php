@@ -17,5 +17,12 @@ Route::post('/save-plastic', [ScavengersDataController::class, 'savePlastic']);
 Route::get('/total-weight', [ScavengersDataController::class, 'getTotalWeight']);
 
 // Car Weight Apis
-Route::post('/save-weight-car-in', [CarDataController::class, 'CarWeightDataIn']);
-Route::post('/save-weight-car-out', [CarDataController::class, 'CarWeightDataOut']);
+Route::post('/weight-car-in', [CarDataController::class, 'CarWeightDataIn']);
+Route::post('/weight-car-out', [CarDataController::class, 'CarWeightDataOut']);
+
+// Card Member
+Route::post('/register-card-member', [CardMemberController::class, 'CardRegister']);
+Route::get('/get-member', [CardMemberController::class, 'getMember']);
+
+// Customer Apis
+Route::get('/customer', [CarDataController::class, 'getCustomer']);

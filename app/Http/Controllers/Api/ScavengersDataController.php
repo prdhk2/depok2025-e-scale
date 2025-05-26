@@ -32,12 +32,14 @@ class ScavengersDataController {
         ]);
 
         $user = User::where('id', $request->user_id)->first();
+
         if (!$user) {
             return response()->json(['error' => 'User tidak valid atau akses ditolak'], 403);
         }
 
         ScavengersWeightData::create([
-            'user_id'   => $request->user_id,
+            'user_id'   => $user->id,
+            'role'   => $user->role,
             'no_order'  => '#PTAL-' . date('sHidmyY'),
             'mlo'       => $request->weight,
             'plastic'   => 0,
@@ -46,6 +48,7 @@ class ScavengersDataController {
         return response()->json(['success' => true]);
     }
 
+
     public function savePlastic(Request $request) {
         $request->validate([
             'user_id'   => 'required|integer',
@@ -53,12 +56,14 @@ class ScavengersDataController {
         ]);
 
         $user = User::where('id', $request->user_id)->first();
+
         if (!$user) {
             return response()->json(['error' => 'User tidak valid atau akses ditolak'], 403);
         }
 
         ScavengersWeightData::create([
-            'user_id'   => $request->user_id,
+            'user_id'   => $user->id,
+            'role'   => $user->role,
             'no_order'  => '#PTAL-' . date('sHidmyY'),
             'mlo'       => 0,
             'plastic'   => $request->weight,
@@ -67,8 +72,11 @@ class ScavengersDataController {
         return response()->json(['success' => true]);
     }
 
+
     public function getTotalWeight() {
+        
         $today = now()->toDateString();
+        
         $data = ScavengersWeightData::whereDate('created_at', $today)
             ->selectRaw('SUM(mlo) as mlo, SUM(plastic) as plastic')
             ->first();

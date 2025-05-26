@@ -11,6 +11,7 @@ class ScavengersWeightData extends Model
 
     protected $fillable = [
         'user_id',
+        'role',
         'no_order',
         'mlo',
         'plastic',
