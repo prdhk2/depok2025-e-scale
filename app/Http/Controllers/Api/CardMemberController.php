@@ -28,6 +28,7 @@ class CardMemberController {
     }
 
     public function getMember() {
+        
         $members = CardMember::all();
 
         if (!$members) {

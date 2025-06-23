@@ -7,6 +7,7 @@ use App\Models\CarWeightData;
 use App\Models\CardMember;
 use App\Models\Customer;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class CarDataController {
     
@@ -40,28 +41,37 @@ class CarDataController {
         return response()->json(['success' => true]);
     }
 
-    public function CarWeightDataOut(Request $request) {
-
+    public function CarWeightDataOut(Request $request)
+    {
         $request->validate([
+            'driver_id'    => 'required|integer',
+            'customer_id'  => 'required|integer',
             'weight_out'   => 'required|numeric',
-            'time_out'     => 'required|date'
+            'time_out'     => 'required|date',
+            
         ]);
+    
+        $today = Carbon::today();
 
         $carData = CarWeightData::whereNull('weight_out')
+            ->where('driver_id', $request->driver_id)
+            ->where('customer_id', $request->customer_id)
+            ->whereDate('created_at', $today)
             ->orderBy('created_at', 'desc')
             ->first();
 
         if (!$carData) {
-            return response()->json(['error' => 'Data masuk belum tersedia untuk update'], 404);
+            return response()->json(['error' => 'Data masuk hari ini tidak ditemukan atau sudah ditimbang keluar'], 404);
         }
-
+    
         $carData->update([
             'weight_out' => $request->weight_out,
             'time_out' => $request->time_out
         ]);
-
+    
         return response()->json(['success' => true]);
     }
+    
 
     public function getCustomer() {
         $customers = Customer::all();

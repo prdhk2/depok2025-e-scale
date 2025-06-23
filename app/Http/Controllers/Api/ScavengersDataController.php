@@ -72,6 +72,31 @@ class ScavengersDataController {
         return response()->json(['success' => true]);
     }
 
+    public function saveGabruk(Request $request) {
+        $request->validate([
+            'user_id'   => 'required|integer',
+            'weight'    => 'required|numeric'
+        ]);
+
+        $user = User::where('id', $request->user_id)->first();
+
+        if(!$user) {
+            return response()->json(['error' => 'User tidak valid'], 403);
+        }
+
+        ScavengersWeightData::create([
+            'user_id'   => $user->id,
+            'role'      => $user->role,
+            'no_order'  => '#PTAL-' . date('sHidmyY'),
+            'mlo'       => 0,
+            'plastic'   => 0,
+            'gabruk'    => $request->weight
+        ]);
+
+        return response()->json(['success' => true]);
+
+    }
+
 
     public function getTotalWeight() {
         

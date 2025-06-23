@@ -15,5 +15,6 @@ class ScavengersWeightData extends Model
         'no_order',
         'mlo',
         'plastic',
+        'gabruk'
     ];
 }
