@@ -10,6 +10,39 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
 class CarDataController {
+
+    public function AddWeightData(Request $request) {
+        $request->validate([
+            'driver_id'     => 'required|integer',
+            'customer_id'   => 'required|integer',
+            'weight_in'     => 'required|numeric',
+            'time_in'       => 'required|date',
+            'weight_out'    => 'required|numeric',
+            'time_out'      => 'required|date'
+        ]);
+
+        $driver = CardMember::find($request->driver_id);
+        if (!$driver) {
+            return response()->json(['error' => 'Driver tidak ditemukan'], 403);
+        }
+
+        $customer = Customer::find($request->customer_id);
+        if (!$customer) {
+            return response()->json(['error' => 'Customer tidak ditemukan'], 403);
+        }
+
+        CarWeightData::create([
+            'driver_id'     => $request->driver_id,
+            'no_order'      => '#PTAL-CAR' . date('sHidmyY'),
+            'customer_id'   => $request->customer_id,
+            'weight_in'     => $request->weight_in,
+            'time_in'       => $request->time_in,
+            'weight_out'    => $request->weight_out,
+            'time_out'      => $request->time_out
+        ]);
+
+        return response()->json(['success' => true]);
+    }
     
     public function CarWeightDataIn(Request $request)
     {

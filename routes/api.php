@@ -20,6 +20,7 @@ Route::get('/total-weight', [ScavengersDataController::class, 'getTotalWeight'])
 Route::post('/save-gabruk', [ScavengersDataController::class, 'saveGabruk']);
 
 // Car Weight Apis
+Route::post('/addWeightData', [CarDataController::class, 'AddWeightData']);
 Route::post('/weightDataIn', [CarDataController::class, 'CarWeightDataIn']);
 Route::post('/weightDataOut', [CarDataController::class, 'CarWeightDataOut']);
 
