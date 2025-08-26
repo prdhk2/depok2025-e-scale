@@ -7,7 +7,8 @@ use App\Models\CarWeightData;
 use App\Models\CardMember;
 use App\Models\Customer;
 use Illuminate\Http\Request;
-use Illuminate\Support\Carbon;
+// use Illuminate\Support\Carbon;
+use Carbon\Carbon;
 
 class CarDataController {
 
@@ -44,25 +45,39 @@ class CarDataController {
         return response()->json(['success' => true]);
     }
     
-    public function CarWeightDataIn(Request $request)
-    {
+    public function CarWeightDataIn(Request $request) {
         $request->validate([
             'driver_id'     => 'required|integer',
             'customer_id'   => 'required|integer',
             'weight_in'     => 'required|numeric',
             'time_in'       => 'required|date'
         ]);
-
+    
         $driver = CardMember::find($request->driver_id);
         if (!$driver) {
             return response()->json(['error' => 'Driver tidak ditemukan'], 403);
         }
-
+    
         $customer = Customer::find($request->customer_id);
         if (!$customer) {
             return response()->json(['error' => 'Customer tidak ditemukan'], 403);
         }
-
+    
+        $currentTime   = Carbon::parse($request->time_in);
+        $OneMinutesAgo = $currentTime->copy()->subMinute();
+    
+        // Cek apakah ada data dengan berat yang sama dalam 1 menit terakhir
+        $existingData = CarWeightData::where('weight_in', $request->weight_in)
+            ->whereBetween('time_in', [$OneMinutesAgo, $currentTime])
+            ->first();
+    
+        if ($existingData) {
+            return response()->json([
+                'error' => 'Data dengan berat yang sama sudah ada dalam 1 menit terakhir',
+                'existing_data' => $existingData
+            ], 409); // 409 Conflict
+        }
+    
         CarWeightData::create([
             'driver_id'     => $request->driver_id,
             'no_order'      => '#PTAL-CAR' . date('sHidmyY'),
@@ -70,9 +85,10 @@ class CarDataController {
             'weight_in'     => $request->weight_in,
             'time_in'       => $request->time_in
         ]);
-
+    
         return response()->json(['success' => true]);
     }
+    
 
     public function CarWeightDataOut(Request $request)
     {

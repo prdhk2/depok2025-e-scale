@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use App\Models\BiogasData;
+use App\Models\TempMonitor;
 use App\Http\Controllers\Controller;
 
 class BiogasController
@@ -50,5 +51,21 @@ class BiogasController
         ]);
 
         return response()->json(['success' => true]);
+    }
+
+    public function pushTemp(Request $request) {
+        $request->validate([
+            "Tmp_Icn"   => 'required',
+            "Tmp_Dct"   => 'required',
+            "Tmp_Prl"   => 'required'
+        ]);
+
+        TempMonitor::create([
+            "Tmp_Icn"   => $request->Tmp_Icn,
+            "Tmp_Dct"   => $request->Tmp_Dct,
+            "Tmp_Prl"   => $request->Tmp_Prl    
+        ]);
+
+        return response()->json(['Success' => true]);
     }
 }
